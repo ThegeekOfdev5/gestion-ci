@@ -1,0 +1,170 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Account;
+
+class OhadaAccountSeeder extends Seeder
+{
+    public function run()
+    {
+        $accounts = [
+            // CLASSE 1 - COMPTES DE RESSOURCES DURABLES
+            ['code' => '10', 'label' => 'Capital', 'type' => 'equity', 'class' => '1'],
+            ['code' => '101', 'label' => 'Capital social', 'type' => 'equity', 'class' => '1'],
+            ['code' => '1011', 'label' => 'Capital souscrit, appelé, versé', 'type' => 'equity', 'class' => '1'],
+            ['code' => '11', 'label' => 'Réserves', 'type' => 'equity', 'class' => '1'],
+            ['code' => '111', 'label' => 'Réserve légale', 'type' => 'equity', 'class' => '1'],
+            ['code' => '12', 'label' => 'Report à nouveau', 'type' => 'equity', 'class' => '1'],
+            ['code' => '121', 'label' => 'Report à nouveau créditeur', 'type' => 'equity', 'class' => '1'],
+            ['code' => '129', 'label' => 'Report à nouveau débiteur', 'type' => 'equity', 'class' => '1'],
+            ['code' => '13', 'label' => 'Résultat net de l\'exercice', 'type' => 'equity', 'class' => '1'],
+            ['code' => '131', 'label' => 'Résultat en instance d\'affectation', 'type' => 'equity', 'class' => '1'],
+
+            // CLASSE 2 - COMPTES D'ACTIF IMMOBILISÉ
+            ['code' => '20', 'label' => 'Immobilisations incorporelles', 'type' => 'asset', 'class' => '2'],
+            ['code' => '201', 'label' => 'Frais d\'établissement', 'type' => 'asset', 'class' => '2'],
+            ['code' => '203', 'label' => 'Logiciels', 'type' => 'asset', 'class' => '2'],
+            ['code' => '21', 'label' => 'Immobilisations corporelles', 'type' => 'asset', 'class' => '2'],
+            ['code' => '211', 'label' => 'Terrains', 'type' => 'asset', 'class' => '2'],
+            ['code' => '212', 'label' => 'Agencements et aménagements de terrains', 'type' => 'asset', 'class' => '2'],
+            ['code' => '213', 'label' => 'Bâtiments', 'type' => 'asset', 'class' => '2'],
+            ['code' => '2151', 'label' => 'Matériel informatique', 'type' => 'asset', 'class' => '2'],
+            ['code' => '2154', 'label' => 'Mobilier', 'type' => 'asset', 'class' => '2'],
+            ['code' => '2182', 'label' => 'Matériel de transport', 'type' => 'asset', 'class' => '2'],
+            ['code' => '28', 'label' => 'Amortissements', 'type' => 'asset', 'class' => '2'],
+            ['code' => '2803', 'label' => 'Amortissements logiciels', 'type' => 'asset', 'class' => '2'],
+            ['code' => '2813', 'label' => 'Amortissements bâtiments', 'type' => 'asset', 'class' => '2'],
+            ['code' => '28151', 'label' => 'Amortissements matériel informatique', 'type' => 'asset', 'class' => '2'],
+            ['code' => '28154', 'label' => 'Amortissements mobilier', 'type' => 'asset', 'class' => '2'],
+            ['code' => '28182', 'label' => 'Amortissements matériel de transport', 'type' => 'asset', 'class' => '2'],
+
+            // CLASSE 3 - COMPTES DE STOCKS
+            ['code' => '31', 'label' => 'Marchandises', 'type' => 'asset', 'class' => '3'],
+            ['code' => '311', 'label' => 'Marchandises stockées', 'type' => 'asset', 'class' => '3'],
+            ['code' => '32', 'label' => 'Matières premières et fournitures', 'type' => 'asset', 'class' => '3'],
+            ['code' => '321', 'label' => 'Matières premières', 'type' => 'asset', 'class' => '3'],
+            ['code' => '33', 'label' => 'En-cours', 'type' => 'asset', 'class' => '3'],
+            ['code' => '35', 'label' => 'Produits finis', 'type' => 'asset', 'class' => '3'],
+
+            // CLASSE 4 - COMPTES DE TIERS
+            ['code' => '40', 'label' => 'Fournisseurs et comptes rattachés', 'type' => 'liability', 'class' => '4'],
+            ['code' => '401', 'label' => 'Fournisseurs', 'type' => 'liability', 'class' => '4'],
+            ['code' => '4011', 'label' => 'Fournisseurs - Achats de biens et services', 'type' => 'liability', 'class' => '4'],
+            ['code' => '408', 'label' => 'Fournisseurs - Factures non parvenues', 'type' => 'liability', 'class' => '4'],
+            ['code' => '41', 'label' => 'Clients et comptes rattachés', 'type' => 'asset', 'class' => '4'],
+            ['code' => '411', 'label' => 'Clients', 'type' => 'asset', 'class' => '4'],
+            ['code' => '4111', 'label' => 'Clients ordinaires', 'type' => 'asset', 'class' => '4'],
+            ['code' => '416', 'label' => 'Créances douteuses', 'type' => 'asset', 'class' => '4'],
+            ['code' => '418', 'label' => 'Clients - Produits à recevoir', 'type' => 'asset', 'class' => '4'],
+            ['code' => '42', 'label' => 'Personnel', 'type' => 'liability', 'class' => '4'],
+            ['code' => '421', 'label' => 'Personnel - Rémunérations dues', 'type' => 'liability', 'class' => '4'],
+            ['code' => '422', 'label' => 'Personnel - Œuvres sociales', 'type' => 'liability', 'class' => '4'],
+            ['code' => '43', 'label' => 'Organismes sociaux', 'type' => 'liability', 'class' => '4'],
+            ['code' => '431', 'label' => 'Sécurité sociale (CNPS)', 'type' => 'liability', 'class' => '4'],
+            ['code' => '44', 'label' => 'État et collectivités publiques', 'type' => 'liability', 'class' => '4'],
+            ['code' => '441', 'label' => 'État - Subventions à recevoir', 'type' => 'asset', 'class' => '4'],
+            ['code' => '4411', 'label' => 'TVA facturée', 'type' => 'liability', 'class' => '4'],
+            ['code' => '442', 'label' => 'État - Impôts et taxes recouvrables', 'type' => 'asset', 'class' => '4'],
+            ['code' => '4421', 'label' => 'TVA récupérable sur immobilisations', 'type' => 'asset', 'class' => '4'],
+            ['code' => '4425', 'label' => 'TVA récupérable sur achats', 'type' => 'asset', 'class' => '4'],
+            ['code' => '443', 'label' => 'Opérations particulières avec l\'État', 'type' => 'liability', 'class' => '4'],
+            ['code' => '444', 'label' => 'État - Impôts sur les bénéfices', 'type' => 'liability', 'class' => '4'],
+            ['code' => '4441', 'label' => 'Impôt sur les sociétés', 'type' => 'liability', 'class' => '4'],
+            ['code' => '445', 'label' => 'État - Taxes sur le chiffre d\'affaires', 'type' => 'liability', 'class' => '4'],
+            ['code' => '4451', 'label' => 'TVA à décaisser', 'type' => 'liability', 'class' => '4'],
+            ['code' => '4452', 'label' => 'TVA due (intracommunautaire)', 'type' => 'liability', 'class' => '4'],
+            ['code' => '4456', 'label' => 'TVA déductible', 'type' => 'asset', 'class' => '4'],
+            ['code' => '4457', 'label' => 'Crédit de TVA à reporter', 'type' => 'asset', 'class' => '4'],
+            ['code' => '447', 'label' => 'État - Autres impôts, taxes et versements assimilés', 'type' => 'liability', 'class' => '4'],
+
+            // CLASSE 5 - COMPTES DE TRÉSORERIE
+            ['code' => '52', 'label' => 'Banques', 'type' => 'asset', 'class' => '5'],
+            ['code' => '521', 'label' => 'Banques locales', 'type' => 'asset', 'class' => '5'],
+            ['code' => '5211', 'label' => 'SGBCI', 'type' => 'asset', 'class' => '5'],
+            ['code' => '5212', 'label' => 'ECOBANK', 'type' => 'asset', 'class' => '5'],
+            ['code' => '5213', 'label' => 'Banque Atlantique', 'type' => 'asset', 'class' => '5'],
+            ['code' => '5214', 'label' => 'UBA', 'type' => 'asset', 'class' => '5'],
+            ['code' => '5215', 'label' => 'Orange Money', 'type' => 'asset', 'class' => '5'],
+            ['code' => '5216', 'label' => 'MTN Money', 'type' => 'asset', 'class' => '5'],
+            ['code' => '5217', 'label' => 'Moov Money', 'type' => 'asset', 'class' => '5'],
+            ['code' => '57', 'label' => 'Caisse', 'type' => 'asset', 'class' => '5'],
+            ['code' => '571', 'label' => 'Caisse siège social', 'type' => 'asset', 'class' => '5'],
+            ['code' => '58', 'label' => 'Virements internes', 'type' => 'asset', 'class' => '5'],
+            ['code' => '581', 'label' => 'Virements de fonds', 'type' => 'asset', 'class' => '5'],
+
+            // CLASSE 6 - COMPTES DE CHARGES
+            ['code' => '60', 'label' => 'Achats et variations de stocks', 'type' => 'expense', 'class' => '6'],
+            ['code' => '601', 'label' => 'Achats de marchandises', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6011', 'label' => 'Achats de marchandises groupe A', 'type' => 'expense', 'class' => '6'],
+            ['code' => '602', 'label' => 'Achats de matières premières', 'type' => 'expense', 'class' => '6'],
+            ['code' => '604', 'label' => 'Achats stockés de matières et fournitures', 'type' => 'expense', 'class' => '6'],
+            ['code' => '605', 'label' => 'Autres achats', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6051', 'label' => 'Achats de fournitures non stockables', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6052', 'label' => 'Achats de fournitures d\'entretien', 'type' => 'expense', 'class' => '6'],
+            ['code' => '61', 'label' => 'Transports', 'type' => 'expense', 'class' => '6'],
+            ['code' => '611', 'label' => 'Transports sur achats', 'type' => 'expense', 'class' => '6'],
+            ['code' => '612', 'label' => 'Transports sur ventes', 'type' => 'expense', 'class' => '6'],
+            ['code' => '613', 'label' => 'Transports pour le compte de tiers', 'type' => 'expense', 'class' => '6'],
+            ['code' => '618', 'label' => 'Autres frais de transport', 'type' => 'expense', 'class' => '6'],
+            ['code' => '62', 'label' => 'Services extérieurs A', 'type' => 'expense', 'class' => '6'],
+            ['code' => '622', 'label' => 'Locations et charges locatives', 'type' => 'expense', 'class' => '6'],
+            ['code' => '624', 'label' => 'Entretiens, réparations et maintenance', 'type' => 'expense', 'class' => '6'],
+            ['code' => '625', 'label' => 'Primes d\'assurances', 'type' => 'expense', 'class' => '6'],
+            ['code' => '626', 'label' => 'Études, recherches et documentation', 'type' => 'expense', 'class' => '6'],
+            ['code' => '627', 'label' => 'Publicité, publications, relations publiques', 'type' => 'expense', 'class' => '6'],
+            ['code' => '628', 'label' => 'Frais de télécommunications', 'type' => 'expense', 'class' => '6'],
+            ['code' => '63', 'label' => 'Services extérieurs B', 'type' => 'expense', 'class' => '6'],
+            ['code' => '631', 'label' => 'Frais bancaires', 'type' => 'expense', 'class' => '6'],
+            ['code' => '632', 'label' => 'Rémunérations d\'intermédiaires et de conseils', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6321', 'label' => 'Commissions et courtages', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6322', 'label' => 'Honoraires', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6323', 'label' => 'Frais d\'actes et de contentieux', 'type' => 'expense', 'class' => '6'],
+            ['code' => '64', 'label' => 'Impôts et taxes', 'type' => 'expense', 'class' => '6'],
+            ['code' => '641', 'label' => 'Impôts et taxes directs', 'type' => 'expense', 'class' => '6'],
+            ['code' => '645', 'label' => 'Impôts et taxes indirects', 'type' => 'expense', 'class' => '6'],
+            ['code' => '646', 'label' => 'Droits d\'enregistrement', 'type' => 'expense', 'class' => '6'],
+            ['code' => '66', 'label' => 'Charges de personnel', 'type' => 'expense', 'class' => '6'],
+            ['code' => '661', 'label' => 'Rémunérations du personnel', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6611', 'label' => 'Appointements, salaires et commissions', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6612', 'label' => 'Primes et gratifications', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6613', 'label' => 'Congés payés', 'type' => 'expense', 'class' => '6'],
+            ['code' => '663', 'label' => 'Charges sociales', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6631', 'label' => 'Charges sociales sur rémunérations (CNPS)', 'type' => 'expense', 'class' => '6'],
+            ['code' => '67', 'label' => 'Frais financiers et charges assimilées', 'type' => 'expense', 'class' => '6'],
+            ['code' => '671', 'label' => 'Intérêts des emprunts', 'type' => 'expense', 'class' => '6'],
+            ['code' => '672', 'label' => 'Intérêts dans loyers de crédit-bail', 'type' => 'expense', 'class' => '6'],
+            ['code' => '68', 'label' => 'Dotations aux amortissements', 'type' => 'expense', 'class' => '6'],
+            ['code' => '681', 'label' => 'Dotations aux amortissements d\'exploitation', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6811', 'label' => 'Dotations aux amortissements des immobilisations incorporelles', 'type' => 'expense', 'class' => '6'],
+            ['code' => '6812', 'label' => 'Dotations aux amortissements des immobilisations corporelles', 'type' => 'expense', 'class' => '6'],
+            // CLASSE 7 - COMPTES DE PRODUITS
+            ['code' => '70', 'label' => 'Ventes', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '701', 'label' => 'Ventes de marchandises', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '7011', 'label' => 'Ventes de marchandises groupe A', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '702', 'label' => 'Ventes de produits finis', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '703', 'label' => 'Ventes de produits intermédiaires', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '704', 'label' => 'Ventes de produits résiduels', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '706', 'label' => 'Services vendus', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '7061', 'label' => 'Prestations de services', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '707', 'label' => 'Produits accessoires', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '71', 'label' => 'Subventions d\'exploitation', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '711', 'label' => 'Subventions d\'équilibre', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '72', 'label' => 'Production immobilisée', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '77', 'label' => 'Revenus financiers et produits assimilés', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '771', 'label' => 'Intérêts de prêts', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '772', 'label' => 'Revenus de participations', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '773', 'label' => 'Escomptes obtenus', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '78', 'label' => 'Transferts de charges', 'type' => 'revenue', 'class' => '7'],
+            ['code' => '781', 'label' => 'Transferts de charges d\'exploitation', 'type' => 'revenue', 'class' => '7'],
+        ];
+
+        foreach ($accounts as $account) {
+            Account::create(array_merge($account, [
+                'is_system' => true,
+                'tenant_id' => null, // Comptes système = partagés entre tous les tenants
+            ]));
+        }
+    }
+}
