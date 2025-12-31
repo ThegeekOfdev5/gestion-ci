@@ -11,7 +11,8 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('tenant_id')->nullable(); // 🔥 GARDER tenant_id (UUID)
+            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
             $table->string('code', 20);
             $table->string('label');

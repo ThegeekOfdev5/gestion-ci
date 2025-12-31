@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
+use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantModel;
-use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 
-class Tenant extends SpatieTenant
+class Tenant extends BaseTenant
 {
-    use SoftDeletes;
+    use HasDomains, SoftDeletes;
+
+    // 🔥 NE PAS implémenter TenantWithDatabase pour single DB
 
     protected $fillable = [
+        'id',
         'name',
-        'domain',
+        'data',
         'subscription_plan',
         'subscription_status',
         'trial_ends_at',
@@ -25,13 +27,15 @@ class Tenant extends SpatieTenant
     ];
 
     protected $casts = [
+        'data' => 'array',
         'trial_ends_at' => 'datetime',
         'subscription_ends_at' => 'datetime',
         'last_payment_at' => 'datetime',
         'next_billing_date' => 'date',
     ];
 
-    // Relations
+    // ==================== RELATIONS ====================
+
     public function company()
     {
         return $this->hasOne(Company::class);
@@ -57,7 +61,8 @@ class Tenant extends SpatieTenant
         return $this->hasOne(Subscription::class);
     }
 
-    // Helpers
+    // ==================== METHODS ====================
+
     public function isSubscribed(): bool
     {
         return $this->subscription_status === 'active' || $this->onTrial();

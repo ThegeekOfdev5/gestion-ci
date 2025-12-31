@@ -11,7 +11,8 @@ return new class extends Migration
     {
         Schema::create('accounting_entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->string('tenant_id')->nullable(); // 🔥 GARDER tenant_id (UUID)
+            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
             $table->date('date');
             $table->string('reference', 100)->nullable();

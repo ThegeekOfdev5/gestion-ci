@@ -1,5 +1,6 @@
 <?php
 // database/migrations/2024_01_01_000001_create_tenants_table.php
+declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -10,10 +11,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tenants', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('domain', 100)->unique()->nullable();
-            $table->string('database', 100)->nullable();
+            // $table->id();
+            $table->string('id')->primary();
+            $table->string('name')->nullable();
 
             // Abonnement
             $table->string('subscription_plan', 50)->nullable();
@@ -29,8 +29,8 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
+            $table->json('data')->nullable();
 
-            $table->index('domain');
             $table->index('subscription_status');
         });
     }

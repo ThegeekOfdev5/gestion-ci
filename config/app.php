@@ -52,7 +52,10 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://gestion-ci.test'),
+
+
+    'asset_url' => env('ASSET_URL'),
 
     /*
     |--------------------------------------------------------------------------
@@ -122,5 +125,16 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Central Domain
+    |--------------------------------------------------------------------------
+    |
+    | Le domaine principal de l'application (sans sous-domaine)
+    | Utilisé pour les inscriptions, connexions et redirections
+    |
+    */
+    'central_domain' => env('CENTRAL_DOMAIN', 'gestion-ci.test'),
 
 ];

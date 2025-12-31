@@ -11,7 +11,8 @@ return new class extends Migration
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->string('tenant_id'); // 🔥 GARDER tenant_id (UUID)
+            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
             $table->string('name', 100);
             $table->text('description')->nullable();

@@ -1,32 +1,39 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
+use Laravel\Fortify\Features;
+use Illuminate\Support\Facades\Route;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
+use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+/*
+|--------------------------------------------------------------------------
+| ROUTES CENTRALES (domaine principal uniquement)
+|--------------------------------------------------------------------------
+| Ces routes sont accessibles sur gestion-ci.test
+| C'est ici que se font les inscriptions et connexions
+*/
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::domain(config('app.central_domain'))->group(function () {
 
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
+    // Page d'accueil
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('home');
 
-    Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
-    Volt::route('settings/password', 'settings.password')->name('user-password.edit');
-    Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
-
-    Volt::route('settings/two-factor', 'settings.two-factor')
-        ->middleware(
-            when(
-                Features::canManageTwoFactorAuthentication()
-                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
-                ['password.confirm'],
-                [],
-            ),
-        )
-        ->name('two-factor.show');
+    // Fortify gère automatiquement :
+    // - GET/POST /login
+    // - GET/POST /register
+    // - GET/POST /forgot-password
+    // - GET/POST /reset-password
+    // - POST /logout
 });
+/*
+|--------------------------------------------------------------------------
+| ROUTE ABONNEMENT EXPIRÉ (accessible partout)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->get('/subscription-expired', function () {
+    return view('subscription.expired');
+})->name('subscription.expired');

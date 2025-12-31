@@ -11,7 +11,8 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->unique()->constrained()->onDelete('cascade');
+            $table->string('tenant_id'); // 🔥 GARDER tenant_id (UUID)
+            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
             // Informations légales
             $table->string('legal_name');
@@ -49,6 +50,8 @@ return new class extends Migration
             $table->integer('payment_terms_days')->default(30);
 
             $table->timestamps();
+
+            $table->index('tenant_id');
         });
     }
 

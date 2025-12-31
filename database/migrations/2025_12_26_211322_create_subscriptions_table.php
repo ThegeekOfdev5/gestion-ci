@@ -11,7 +11,8 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->unique()->constrained()->onDelete('cascade');
+            $table->string('tenant_id'); // 🔥 GARDER tenant_id (UUID)
+            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
             $table->string('plan', 50);
             $table->string('billing_cycle', 20)->default('monthly');
