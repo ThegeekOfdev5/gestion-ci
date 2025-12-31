@@ -48,10 +48,10 @@ class CreateNewUser implements CreatesNewUsers
             // 1. Créer le tenant
             $tenant = Tenant::create([
                 'name' => $input['company_name'],
-                'subscription_plan' => 'essentiel',
-                'subscription_status' => 'trial',
-                'trial_ends_at' => now()->addDays(30),
-                'billing_email' => $input['email'],
+                // 'subscription_plan' => 'essentiel',
+                // 'subscription_status' => 'trial',
+                // 'trial_ends_at' => now()->addDays(30),
+                // 'billing_email' => $input['email'],
             ]);
 
             // 2. Générer et créer le domaine complet
@@ -80,17 +80,17 @@ class CreateNewUser implements CreatesNewUsers
                 ]);
 
                 // Créer l'abonnement
-                Subscription::create([
-                    'plan' => 'essentiel',
-                    'billing_cycle' => 'monthly',
-                    'amount' => 12000,
-                    'currency' => 'XOF',
-                    'status' => 'trialing',
-                    'trial_ends_at' => now()->addDays(30),
-                    'current_period_start' => now(),
-                    'current_period_end' => now()->addDays(30),
-                    'auto_renew' => true,
-                ]);
+                // Subscription::create([
+                //     'plan' => 'essentiel',
+                //     'billing_cycle' => 'monthly',
+                //     'amount' => 12000,
+                //     'currency' => 'XOF',
+                //     'status' => 'trialing',
+                //     'trial_ends_at' => now()->addDays(30),
+                //     'current_period_start' => now(),
+                //     'current_period_end' => now()->addDays(30),
+                //     'auto_renew' => true,
+                // ]);
             });
 
             // 4. Créer l'utilisateur

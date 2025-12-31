@@ -61,6 +61,11 @@ class Tenant extends BaseTenant
         return $this->hasOne(Subscription::class);
     }
 
+    public function onboardingProgress()
+    {
+        return $this->hasOne(OnboardingProgress::class);
+    }
+
     // ==================== METHODS ====================
 
     public function isSubscribed(): bool

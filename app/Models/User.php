@@ -1,5 +1,4 @@
 <?php
-// app/Models/User.php
 
 namespace App\Models;
 
@@ -7,25 +6,28 @@ use Illuminate\Support\Str;
 use App\Traits\BelongsToTenant;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, BelongsToTenant;
+    use BelongsToTenant, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
-        'email',
-        'password',
+        'name',
         'first_name',
         'last_name',
+        'email',
         'phone',
-        'avatar_url',
-        'role',
-        'permissions',
+        'avatar',
+        'password',
+        'language',
+        'phone_verified', // Ajouté
         'is_active',
-        'last_login_at',
+        'last_login_ip', // Optionnel
     ];
 
     protected $hidden = [
@@ -35,15 +37,22 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'permissions' => 'array',
+        'phone_verified' => 'boolean',
         'is_active' => 'boolean',
         'last_login_at' => 'datetime',
+        // 'password' => 'hashed', // Retiré - Laravel hash automatiquement
     ];
 
-    // ==================== RELATIONS ====================
+    protected $appends = [
+        'full_name',
+        'initials',
+        'avatar_url',
+    ];
 
-    public function tenant()
+    /**
+     * Relation : Tenant
+     */
+    public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
     }
@@ -70,73 +79,36 @@ class User extends Authenticatable
 
     // ==================== ACCESSORS ====================
 
+    /**
+     * Obtenir le nom complet
+     */
     public function getFullNameAttribute(): string
     {
-        return trim("{$this->first_name} {$this->last_name}");
-    }
-
-    public function getInitialsAttribute(): string
-    {
-        $firstInitial = $this->first_name ? substr($this->first_name, 0, 1) : '';
-        $lastInitial = $this->last_name ? substr($this->last_name, 0, 1) : '';
-        return strtoupper($firstInitial . $lastInitial);
-    }
-
-    public function getAvatarAttribute(): string
-    {
-        if ($this->avatar_url) {
-            return $this->avatar_url;
+        if ($this->first_name && $this->last_name) {
+            return trim("{$this->first_name} {$this->last_name}");
         }
 
-        // Avatar par défaut avec initiales
-        return "https://ui-avatars.com/api/?name={$this->full_name}&color=fff&background=0ea5e9";
-    }
-
-    // ==================== METHODS ====================
-
-    public function isOwner(): bool
-    {
-        return $this->role === 'owner';
-    }
-
-    public function isAdmin(): bool
-    {
-        return in_array($this->role, ['owner', 'admin']);
-    }
-
-    public function canAccessModule(string $module): bool
-    {
-        if ($this->isOwner()) {
-            return true;
-        }
-
-        return $this->permissions[$module] ?? false;
-    }
-
-    public function hasPermission(string $permission): bool
-    {
-        if ($this->isOwner()) {
-            return true;
-        }
-
-        return $this->permissions[$permission] ?? false;
-    }
-
-    public function updateLastLogin(): void
-    {
-        $this->update(['last_login_at' => now()]);
+        return $this->name;
     }
 
     /**
-     * Get the user's initials
+     * Obtenir les initiales
      */
-    public function initials(): string
+    public function getInitialsAttribute(): string
     {
         $firstName = trim($this->first_name ?? '');
         $lastName = trim($this->last_name ?? '');
 
-        if (empty($firstName) && empty($lastName)) {
+        if (empty($firstName) && empty($lastName) && empty($this->name)) {
             return '??';
+        }
+
+        if (empty($firstName) && empty($lastName)) {
+            // Utiliser le nom complet s'il n'y a pas de prénom/nom séparés
+            $nameParts = explode(' ', $this->name);
+            $firstInitial = $nameParts[0] ? substr($nameParts[0], 0, 1) : '';
+            $secondInitial = isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : '';
+            return strtoupper($firstInitial . $secondInitial);
         }
 
         $initials = '';
@@ -150,5 +122,114 @@ class User extends Authenticatable
         }
 
         return $initials ?: '??';
+    }
+
+    /**
+     * Obtenir l'avatar URL
+     */
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if ($this->avatar) {
+            // Vérifier si c'est déjà une URL complète
+            if (filter_var($this->avatar, FILTER_VALIDATE_URL)) {
+                return $this->avatar;
+            }
+
+            // Sinon, chercher dans storage
+            if (Str::startsWith($this->avatar, 'avatars/') || Str::startsWith($this->avatar, 'public/avatars/')) {
+                return asset('storage/' . ltrim($this->avatar, 'public/'));
+            }
+
+            return asset('storage/avatars/' . $this->avatar);
+        }
+
+        // Gravatar fallback
+        $hash = md5(strtolower(trim($this->email)));
+        return "https://www.gravatar.com/avatar/{$hash}?d=identicon&s=200";
+    }
+
+    // ==================== METHODS ====================
+
+    /**
+     * Enregistrer la dernière connexion
+     */
+    public function updateLastLogin(?string $ip = null): void
+    {
+        $this->update([
+            'last_login_at' => now(),
+            'last_login_ip' => $ip ?? request()->ip(),
+        ]);
+    }
+
+    /**
+     * Vérifier si l'utilisateur est admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->hasRole('owner');
+    }
+
+    public function canAccessModule(string $module): bool
+    {
+        if ($this->isOwner()) {
+            return true;
+        }
+
+        // Vérifier la permission via Spatie
+        return $this->hasPermissionTo("access.{$module}") ||
+            $this->hasPermissionTo("{$module}.*");
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->isOwner()) {
+            return true;
+        }
+
+        // Utiliser la méthode de Spatie
+        return $this->hasPermissionTo($permission);
+    }
+
+    /**
+     * Vérifier si l'email est vérifié
+     */
+    public function isEmailVerified(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    /**
+     * Scope : Utilisateurs actifs
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope : Utilisateurs du tenant courant
+     */
+    public function scopeForCurrentTenant($query)
+    {
+        return $query->where('tenant_id', auth()->user()->tenant_id ?? null);
+    }
+
+    /**
+     * Scope : Chercher par nom ou email
+     */
+    public function scopeSearch($query, string $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%")
+                ->orWhere('first_name', 'LIKE', "%{$search}%")
+                ->orWhere('last_name', 'LIKE', "%{$search}%")
+                ->orWhere('phone', 'LIKE', "%{$search}%");
+        });
     }
 }

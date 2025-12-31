@@ -11,47 +11,52 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id'); // 🔥 GARDER tenant_id (UUID)
+            $table->string('tenant_id');
             $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
-            // Informations légales
-            $table->string('legal_name');
-            $table->string('trade_name')->nullable();
-            $table->string('legal_form', 50)->nullable();
+            // Informations de base
+            $table->string('name');
+            $table->string('legal_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('mobile')->nullable();
 
             // Identifiants fiscaux CI
-            $table->string('nif', 50)->nullable();
-            $table->string('rccm', 50)->nullable();
-            $table->string('account_number', 50)->nullable();
+            $table->string('nif')->nullable()->comment('Numéro Identification Fiscale');
+            $table->string('rccm')->nullable()->comment('Registre Commerce');
+            $table->string('ice')->nullable()->comment('Identifiant Commun Entreprise');
+            $table->string('ifu')->nullable()->comment('Identifiant Fiscal Unique');
 
-            // Coordonnées
+            // Adresse
             $table->text('address')->nullable();
-            $table->string('city', 100)->nullable();
-            $table->string('postal_code', 20)->nullable();
-            $table->string('country', 2)->default('CI');
-            $table->string('phone', 20)->nullable();
-            $table->string('email')->nullable();
-            $table->string('website')->nullable();
+            $table->string('city')->default('Abidjan');
+            $table->string('postal_code')->nullable();
+            $table->string('country')->default('Côte d\'Ivoire');
 
-            // Branding
-            $table->string('logo_url')->nullable();
-            $table->string('primary_color', 7)->nullable();
-
-            // Comptabilité
-            $table->integer('fiscal_year_start_month')->default(1);
-            $table->string('currency', 3)->default('XOF');
+            // Logo
+            $table->string('logo')->nullable();
 
             // Paramètres facturation
-            $table->string('invoice_prefix', 10)->default('FAC');
-            $table->string('quote_prefix', 10)->default('DEV');
-            $table->integer('next_invoice_number')->default(1);
-            $table->integer('next_quote_number')->default(1);
-            $table->text('invoice_footer')->nullable();
-            $table->integer('payment_terms_days')->default(30);
+            $table->string('invoice_prefix')->default('FAC');
+            $table->unsignedInteger('last_invoice_number')->default(0);
+            $table->string('quote_prefix')->default('DEV');
+            $table->unsignedInteger('last_quote_number')->default(0);
+
+            // Paramètres fiscaux
+            $table->enum('tax_regime', ['reel_simplifie', 'reel_normal'])->default('reel_simplifie');
+            $table->decimal('default_tax_rate', 5, 2)->default(18.00); // TVA 18% CI
+
+            // Paramètres généraux
+            $table->string('currency')->default('XOF');
+            $table->string('timezone')->default('Africa/Abidjan');
+            $table->string('locale')->default('fr_CI');
 
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->index('tenant_id');
+            // Index
+            $table->unique(['tenant_id']);
+            $table->index('nif');
         });
     }
 

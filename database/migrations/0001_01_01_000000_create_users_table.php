@@ -1,4 +1,5 @@
 <?php
+
 // database/migrations/2024_01_01_000002_create_users_table.php
 
 use Illuminate\Database\Migrations\Migration;
@@ -11,27 +12,44 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id'); // 🔥 GARDER tenant_id (UUID)
-            $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
 
-            // Auth
+            // Relation tenant
+            $table->string('tenant_id');
+            $table->foreign('tenant_id')
+                ->references('id')
+                ->on('tenants')
+                ->onDelete('cascade');
+
+            // Authentification
+            $table->string('name');
             $table->string('email');
             $table->string('password');
-            $table->rememberToken();
             $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
 
-            // Profile
-            $table->string('first_name', 100)->nullable();
-            $table->string('last_name', 100)->nullable();
-            $table->string('phone', 20)->nullable();
-            $table->string('avatar_url')->nullable();
+            // Informations personnelles
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('avatar')->nullable();
+
+            // Préférences
+            $table->string('language')->default('fr');
+            $table->boolean('phone_verified')->default(false);
+
+            // Sécurité
+            $table->timestamp('last_login_at')->nullable();
+            $table->string('last_login_ip')->nullable();
 
             // Status
             $table->boolean('is_active')->default(true);
-            $table->timestamp('last_login_at')->nullable();
 
+            $table->softDeletes();
+
+            // Timestamps
             $table->timestamps();
 
+            // Index et contraintes d'unicité
             $table->unique(['tenant_id', 'email']);
             $table->index('tenant_id');
             $table->index('email');

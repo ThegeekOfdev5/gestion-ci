@@ -3,6 +3,7 @@
 use Livewire\Volt\Volt;
 use Laravel\Fortify\Features;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Onboarding\OnboardingWizard;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
@@ -28,6 +29,12 @@ Route::domain(config('app.central_domain'))->group(function () {
     // - GET/POST /reset-password
     // - POST /logout
 });
+// Onboarding (auth uniquement)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/onboarding', OnboardingWizard::class)
+        ->name('onboarding');
+});
+
 /*
 |--------------------------------------------------------------------------
 | ROUTE ABONNEMENT EXPIRÉ (accessible partout)
