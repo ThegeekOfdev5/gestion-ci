@@ -25,26 +25,50 @@ class FortifyServiceProvider extends ServiceProvider
             {
                 $user = auth()->user();
 
+                // Vérification user et tenant
                 if (!$user || !$user->tenant) {
-                    return redirect()->route('home')->withErrors([
-                        'error' => 'Impossible de déterminer votre entreprise.'
+                    auth()->logout();
+                    return redirect()->route('login')->withErrors([
+                        'email' => 'Impossible de déterminer votre entreprise. Veuillez contacter le support.'
                     ]);
                 }
 
-                // Récupérer le premier domaine du tenant
-                $domain = $user->tenant->domains()->first();
+                $tenant = $user->tenant;
+
+                // Récupérer le domaine du tenant
+                $domain = $tenant->domains()->first();
 
                 if (!$domain) {
-                    return redirect()->route('home')->withErrors([
-                        'error' => 'Votre entreprise n\'a pas de domaine configuré.'
+                    auth()->logout();
+                    return redirect()->route('login')->withErrors([
+                        'email' => 'Votre entreprise n\'a pas de domaine configuré.'
+                    ]);
+                }
+
+                // Vérifier si onboarding est complété
+                $progress = $tenant->onboardingProgress;
+
+                // Si pas de progression, la créer
+                if (!$progress) {
+                    $progress = $tenant->onboardingProgress()->create([
+                        'current_step' => 1,
+                        'completed' => false,
                     ]);
                 }
 
                 // Construire l'URL du tenant
                 $tenantUrl = $this->buildTenantUrl($domain->domain);
 
-                // Redirection vers le dashboard du tenant
-                return redirect()->away($tenantUrl . '/dashboard');
+                // Rediriger selon état onboarding
+                if (!$progress->completed) {
+                    // Onboarding incomplet → rediriger vers /onboarding
+                    return redirect()->away($tenantUrl . '/onboarding')
+                        ->with('info', 'Bienvenue ! Veuillez compléter la configuration de votre entreprise.');
+                }
+
+                // Onboarding complété → rediriger vers dashboard
+                return redirect()->away($tenantUrl . '/dashboard')
+                    ->with('success', 'Connexion réussie !');
             }
 
             private function buildTenantUrl(string $domain): string
@@ -60,26 +84,33 @@ class FortifyServiceProvider extends ServiceProvider
             {
                 $user = auth()->user();
 
+                // Vérification user et tenant
                 if (!$user || !$user->tenant) {
-                    return redirect()->route('home')->withErrors([
-                        'error' => 'Erreur lors de la création de votre compte.'
+                    auth()->logout();
+                    return redirect()->route('register')->withErrors([
+                        'email' => 'Erreur lors de la création de votre compte. Veuillez réessayer.'
                     ]);
                 }
 
+                $tenant = $user->tenant;
+
                 // Récupérer le domaine du tenant nouvellement créé
-                $domain = $user->tenant->domains()->first();
+                $domain = $tenant->domains()->first();
 
                 if (!$domain) {
-                    return redirect()->route('home')->withErrors([
-                        'error' => 'Erreur lors de la configuration de votre entreprise.'
+                    auth()->logout();
+                    return redirect()->route('register')->withErrors([
+                        'email' => 'Erreur lors de la configuration de votre entreprise.'
                     ]);
                 }
 
                 // Construire l'URL du tenant
                 $tenantUrl = $this->buildTenantUrl($domain->domain);
 
-                // Redirection vers le dashboard avec message de bienvenue
-                return redirect()->away($tenantUrl . '/dashboard?welcome=1');
+                // TOUJOURS rediriger vers onboarding après inscription
+                // (CreateNewUser crée la progression avec current_step = 1)
+                return redirect()->away($tenantUrl . '/onboarding')
+                    ->with('success', '🎉 Bienvenue ! Configurez maintenant votre entreprise.');
             }
 
             private function buildTenantUrl(string $domain): string
@@ -99,7 +130,7 @@ class FortifyServiceProvider extends ServiceProvider
                 $centralUrl = "{$protocol}://{$centralDomain}";
 
                 return redirect()->away($centralUrl)
-                    ->with('status', 'Vous êtes déconnecté.');
+                    ->with('status', 'Vous êtes déconnecté avec succès.');
             }
         });
     }

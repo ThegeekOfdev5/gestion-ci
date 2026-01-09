@@ -94,7 +94,7 @@ class User extends Authenticatable
     /**
      * Obtenir les initiales
      */
-    public function getInitialsAttribute(): string
+    public function initials(): string
     {
         $firstName = trim($this->first_name ?? '');
         $lastName = trim($this->last_name ?? '');

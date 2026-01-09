@@ -76,15 +76,5 @@
                 </flux:link>
             </div>
         @endif
-
-        @if (app()->environment('local'))
-            <div class="p-4 border border-yellow-200 rounded-lg bg-yellow-50 text-xs text-yellow-800">
-                <p class="font-semibold mb-2">Comptes de démo</p>
-                <p>Owner owner@demo.ci / password</p>
-                <p>Admin admin@demo.ci / password</p>
-                <p>Comptable comptable@demo.ci / password</p>
-                <p>Commercial commercial@demo.ci / password</p>
-            </div>
-        @endif
     </div>
 </x-layouts.auth>

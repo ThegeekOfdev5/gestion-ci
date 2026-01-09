@@ -20,12 +20,15 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('mobile')->nullable();
+            $table->string('business_sector')->nullable();
 
             // Identifiants fiscaux CI
             $table->string('nif')->nullable()->comment('Numéro Identification Fiscale');
             $table->string('rccm')->nullable()->comment('Registre Commerce');
             $table->string('ice')->nullable()->comment('Identifiant Commun Entreprise');
             $table->string('ifu')->nullable()->comment('Identifiant Fiscal Unique');
+            $table->string('tax_card_number')->nullable();
+            $table->string('tax_office')->nullable();
 
             // Adresse
             $table->text('address')->nullable();
@@ -44,12 +47,20 @@ return new class extends Migration
 
             // Paramètres fiscaux
             $table->enum('tax_regime', ['reel_simplifie', 'reel_normal'])->default('reel_simplifie');
-            $table->decimal('default_tax_rate', 5, 2)->default(18.00); // TVA 18% CI
+            $table->decimal('default_tax_rate', 5, 2)->default(18.00);
+            $table->boolean('vat_enabled')->default(true);
 
             // Paramètres généraux
             $table->string('currency')->default('XOF');
             $table->string('timezone')->default('Africa/Abidjan');
             $table->string('locale')->default('fr_CI');
+            $table->text('payment_terms')->nullable();
+            $table->string('fiscal_year_start')->nullable();
+
+            // Paramètres système
+            $table->json('enabled_modules')->nullable();
+            $table->string('selected_plan')->nullable();
+            $table->unsignedInteger('user_count')->default(1);
 
             $table->timestamps();
             $table->softDeletes();

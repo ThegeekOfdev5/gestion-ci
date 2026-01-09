@@ -74,7 +74,7 @@ class EnsureOnboardingCompleted
 
         // Si onboarding terminé et sur la page onboarding, rediriger dashboard
         if ($progress->completed && $request->routeIs('onboarding')) {
-            return redirect()->route('dashboard')
+            return redirect()->route('tenant.dashboard')
                 ->with('info', 'Votre configuration est déjà complète.');
         }
 

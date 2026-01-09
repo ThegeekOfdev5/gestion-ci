@@ -29,11 +29,7 @@ Route::domain(config('app.central_domain'))->group(function () {
     // - GET/POST /reset-password
     // - POST /logout
 });
-// Onboarding (auth uniquement)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/onboarding', OnboardingWizard::class)
-        ->name('onboarding');
-});
+
 
 /*
 |--------------------------------------------------------------------------
